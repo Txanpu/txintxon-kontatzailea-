@@ -165,12 +165,13 @@ function Chinchon:_buildGameView()
 
     local panel_w = screen_w - 20
     local btn_w_6 = math.floor((panel_w - 36) / 6)
-    local btn_w_4 = math.floor((panel_w - 24) / 4)
+    local btn_w_3 = math.floor((panel_w - 18) / 3)
 
     -- Ajuste dinámico de altura según cantidad de jugadores (2 a 6)
     local avail_h = screen_h - 130
     local row_block_h = math.floor(avail_h / n)
     local btn_h = math.max(38, math.min(68, math.floor(row_block_h * 0.52)))
+    local ctrl_h = math.max(40, math.min(56, math.floor(screen_h * 0.055)))
     local font_sz = (n >= 5) and 18 or 21
 
     local main_list = VerticalGroup:new({
@@ -179,6 +180,10 @@ function Chinchon:_buildGameView()
             string.format(_("CHINCHÓN (%d Jugadores) — Límite: %d ptos"), n, self.limit),
             19
         ),
+        -- Keep the exit action at the top so it remains visible on short screens.
+        self:_makeButton(_("Salir"), function()
+            self:_closeWindow(true)
+        end, panel_w - 20, ctrl_h, 2),
     })
 
     for i = 1, n do
@@ -230,22 +235,18 @@ function Chinchon:_buildGameView()
         table.insert(main_list, player_box)
     end
 
-    local ctrl_h = math.max(40, math.min(56, math.floor(screen_h * 0.055)))
     local bottom_controls = HorizontalGroup:new({
         align = "center",
         self:_makeButton(_("Jugadores"), function()
             self.num_players = nil
             self:show()
-        end, btn_w_4, ctrl_h, 2),
+        end, btn_w_3, ctrl_h, 2),
         self:_makeButton(_("A Cero"), function()
             self:_resetScores()
-        end, btn_w_4, ctrl_h, 2),
+        end, btn_w_3, ctrl_h, 2),
         self:_makeButton(string.format(_("Lím: %d"), self.limit), function()
             self:_toggleLimit()
-        end, btn_w_4, ctrl_h, 2),
-        self:_makeButton(_("Salir"), function()
-            self:_closeWindow(true)
-        end, btn_w_4, ctrl_h, 2),
+        end, btn_w_3, ctrl_h, 2),
     })
 
     table.insert(main_list, bottom_controls)
